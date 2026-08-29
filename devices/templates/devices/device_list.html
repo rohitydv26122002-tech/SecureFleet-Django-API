@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Device Dashboard</title>
+    <link rel="stylesheet" href="{% static 'devices/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📡 Device Dashboard</h1>
+                <div class="subtitle">{{ devices|length }} devices tracked</div>
+            </div>
+            <button class="btn" onclick="toggleForm()">+ Add Device</button>
+        </div>
+
+        <div class="form-container" id="addForm">
+            <form method="POST">
+                {% csrf_token %}
+                <label>Device Name</label>
+                <input type="text" name="name" placeholder="e.g. Sensor4" required>
+
+                <label>Status</label>
+                <input type="text" name="status" placeholder="online / offline" required>
+
+                <button type="submit" class="btn">Save Device</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <table>
+                <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Status</th>
+    <th>Last Seen</th>
+    <th>Action</th>
+</tr>
+{% for device in devices %}
+<tr>
+    <td>{{ device.id }}</td>
+    <td>{{ device.name }}</td>
+    <td><span class="badge {{ device.status }}">{{ device.status }}</span></td>
+    <td>{{ device.last_seen }}</td>
+    <td>
+        <a href="{% url 'delete_device' device.id %}" onclick="return confirm('Delete this device?')" style="color: #f87171;">Delete</a>
+        <a href="{% url 'edit_device' device.id %}" style="color: #6366f1; margin-right: 12px;">Edit</a>
+    </td>
+</tr>
+{% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function toggleForm() {
+            document.getElementById('addForm').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

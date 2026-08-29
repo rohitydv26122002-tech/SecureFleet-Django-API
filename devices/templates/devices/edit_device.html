@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Device</title>
+    <link rel="stylesheet" href="{% static 'devices/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Edit Device</h1>
+        </div>
+
+        <div class="form-container active">
+            <form method="POST">
+                {% csrf_token %}
+                <label>Device Name</label>
+                <input type="text" name="name" value="{{ device.name }}" required>
+
+                <label>Status</label>
+                <input type="text" name="status" value="{{ device.status }}" required>
+
+                <button type="submit" class="btn">Update Device</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
