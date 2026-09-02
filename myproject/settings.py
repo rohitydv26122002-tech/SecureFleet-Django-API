@@ -37,16 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'website',
-    'tailwind',
-    'theme',
     'django_browser_reload',
     'rest_framework',
     'rest_framework.authtoken',
     'devices',
 ]
 
-TAILWIND_APP_NAME = 'theme'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
@@ -129,7 +125,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 LOGIN_URL = '/admin/login/'
 
 REST_FRAMEWORK = {
