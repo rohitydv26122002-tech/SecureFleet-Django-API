@@ -1,150 +1,92 @@
-# 🛡️ SecureFleet — IoT Device Management REST API
+# SecureFleet - IoT Device Management API
 
-A Django REST Framework-based backend system for managing an IoT device fleet, built with a focus on real-world backend engineering practices: authentication, authorization, rate-limiting, and full CRUD functionality.
+A REST API built with Django and Django REST Framework for managing IoT devices. I built this project to get hands-on experience with backend authentication systems, permissions, and API design - the kind of stuff that's actually used in real IoT/device management systems.
 
----
+## Screenshots
 
-## 📸 Screenshots
-
-### Device Dashboard
+**Dashboard**
 ![Dashboard](screenshots/dashboard.png)
 
-### Admin Panel
+**Admin Panel**
 ![Admin Panel](screenshots/admin-panel.png)
 
-### REST API Response
+**API Response**
 ![API Response](screenshots/api-response.png)
 
-### Login Page
+**Login Page**
 ![Login Page](screenshots/login.png)
 
----
+## What it does
 
-## 🚀 Features
+- Full CRUD for devices (add, view, edit, delete) - through a browser dashboard and a REST API
+- Three ways to authenticate depending on who's accessing it:
+  - Session auth for the dashboard (browser)
+  - Token auth for API/script access
+  - JWT (access + refresh tokens) - more modern approach
+- Only staff accounts can log into the Django admin panel, regular users have their own login
+- API rate limiting so nobody can spam the endpoints (5 requests/min per user)
+- Tested everything with Postman, and also wrote a small Python script that logs in and hits the API like a real device would
 
-- **Full CRUD** — Create, Read, Update, Delete devices via both a web dashboard and a REST API
-- **Triple Authentication System**
-  - Session-based auth for the browser dashboard
-  - Token-based auth for programmatic/device-level API access
-  - JWT (access + refresh tokens) for modern API authentication
-- **Role-Based Access Control** — Staff-only Django admin access, separate login flow for regular users
-- **API Rate Limiting (Throttling)** — Protects endpoints from abuse (5 requests/minute per user)
-- **Custom-Styled Dashboard** — Responsive UI built with Django templates and vanilla CSS/JS
-- **Tested End-to-End** — Verified using Postman and a Python client script simulating real device authentication
+## Tech used
 
----
+Python, Django, Django REST Framework, SQLite, HTML/CSS/JS for the dashboard, SimpleJWT for JWT auth.
 
-## 🛠️ Tech Stack
-
-- **Backend:** Python, Django, Django REST Framework
-- **Authentication:** Django Session Auth, DRF Token Auth, SimpleJWT
-- **Database:** SQLite (via Django ORM)
-- **Frontend:** HTML, CSS, JavaScript (Django Templates)
-- **Testing:** Postman, Python `requests` library
-
----
-
-## 📁 Project Structure
-
-```
-myproject/
-├── devices/                 # Main application
-│   ├── models.py            # Device model
-│   ├── serializers.py       # DRF serializers
-│   ├── views.py             # API + dashboard views
-│   ├── urls.py               # App-level routing
-│   └── templates/devices/    # Dashboard, login, edit HTML
-├── myproject/                # Core settings & project-level URLs
-├── manage.py
-└── requirements.txt
-```
-
----
-
-## ⚙️ Setup & Installation
+## Running it locally
 
 ```bash
-# Clone the repository
 git clone https://github.com/rohitydv26122002-tech/SecureFleet-Django-API.git
 cd SecureFleet-Django-API
 
-# Create and activate a virtual environment
 python -m venv .venv
-.venv\Scripts\Activate.ps1      # Windows
-source .venv/bin/activate       # macOS/Linux
+.venv\Scripts\Activate.ps1
 
-# Install dependencies
 pip install django djangorestframework djangorestframework-simplejwt
 
-# Run migrations
 python manage.py migrate
-
-# Create an admin user
 python manage.py createsuperuser
-
-# Start the server
 python manage.py runserver
 ```
 
-Visit:
-- Dashboard: `http://127.0.0.1:8000/api/dashboard/`
-- Admin Panel: `http://127.0.0.1:8000/admin/`
-- API: `http://127.0.0.1:8000/api/devices/`
+Then go to:
+- `/api/dashboard/` - the dashboard
+- `/admin/` - admin panel
+- `/api/devices/` - the API itself
 
----
+## Getting an auth token
 
-## 🔑 API Authentication
-
-### Get a Token
-```bash
-POST /api/token/
-Body: { "username": "your_username", "password": "your_password" }
+```
+POST /api/token/           -> normal token
+POST /api/jwt/token/       -> JWT (access + refresh)
 ```
 
-### Get a JWT
-```bash
-POST /api/jwt/token/
-Body: { "username": "your_username", "password": "your_password" }
+Then send it with your requests:
 ```
-
-### Use the Token
-```bash
-GET /api/devices/
-Header: Authorization: Token <your_token>
+Authorization: Token <your_token>
 ```
 or for JWT:
-```bash
-Header: Authorization: Bearer <your_access_token>
+```
+Authorization: Bearer <your_access_token>
 ```
 
----
+## API endpoints
 
-## 📡 API Endpoints
+| Method | Endpoint | What it does |
+|--------|----------|---------------|
+| GET | /api/devices/ | list all devices |
+| POST | /api/devices/ | add a new device |
+| GET | /api/devices/{id}/ | get one device |
+| PUT | /api/devices/{id}/ | update a device |
+| DELETE | /api/devices/{id}/ | delete a device |
+| POST | /api/token/ | get a token |
+| POST | /api/jwt/token/ | get a JWT pair |
+| POST | /api/jwt/refresh/ | refresh access token |
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|----------------|
-| GET | `/api/devices/` | List all devices | ✅ |
-| POST | `/api/devices/` | Create a new device | ✅ |
-| GET | `/api/devices/{id}/` | Get a specific device | ✅ |
-| PUT | `/api/devices/{id}/` | Update a device | ✅ |
-| DELETE | `/api/devices/{id}/` | Delete a device | ✅ |
-| POST | `/api/token/` | Obtain auth token | ❌ |
-| POST | `/api/jwt/token/` | Obtain JWT pair | ❌ |
-| POST | `/api/jwt/refresh/` | Refresh JWT access token | ❌ |
+All of the above (except getting tokens) need auth.
 
----
+## Why I built it this way
 
-## 🎯 What This Project Demonstrates
-
-This project was built to practice real-world backend engineering concepts relevant to IoT systems:
-- Designing secure APIs for both human users and machine/device clients
-- Implementing multiple authentication strategies appropriate to different client types
-- Protecting APIs from abuse via rate-limiting
-- Testing APIs the way a real device would authenticate and communicate — not just through a browser
+Most tutorial projects just do basic CRUD with one login system. I wanted to actually understand *why* you'd pick session auth vs token vs JWT, so I implemented all three for different use cases - dashboard vs API vs simulated device access. Same thing with throttling and admin permissions - trying to build something closer to how it'd actually work in production, not just a toy project.
 
 ---
-
-## 👤 Author
-
-**Rohit Yadav**
-[LinkedIn](https://www.linkedin.com/in/rohit-yadav-23707639a) · [GitHub](https://github.com/rohitydv26122002-tech)
+Rohit Yadav - [LinkedIn](https://www.linkedin.com/in/rohit-yadav-23707639a) - [GitHub](https://github.com/rohitydv26122002-tech)
+git
