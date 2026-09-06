@@ -89,4 +89,3 @@ Most tutorial projects just do basic CRUD with one login system. I wanted to act
 
 ---
 Rohit Yadav - [LinkedIn](https://www.linkedin.com/in/rohit-yadav-23707639a) - [GitHub](https://github.com/rohitydv26122002-tech)
-git
